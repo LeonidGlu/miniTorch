@@ -11,6 +11,7 @@ Tensor::Tensor(const std::vector<size_t>& shape) : shape_(shape) {
         }
         data_.resize(size_, 0);
     }
+    initStrides();
 }
 
 Tensor::Tensor(const std::vector<size_t>& shape, const std::vector<float> data) : shape_(shape), data_(data) {
@@ -25,36 +26,69 @@ Tensor::Tensor(const std::vector<size_t>& shape, const std::vector<float> data) 
     if (data_.size() != size_) {
         throw std::runtime_error("Data size doesn't match shape");
     }
+    initStrides();
 }
 
 Tensor::Tensor(const Tensor& other) {
     data_ = other.data_;
     shape_ = other.shape_;
     size_ = other.size_;
+    strides_ = other.strides_;
 }
 
-Tensor::Tensor(Tensor&& other) noexcept : data_(std::move(other.data_)),  shape_(std::move(other.shape_)), size_(other.size_) {
+Tensor::Tensor(Tensor&& other) noexcept : data_(std::move(other.data_)),  shape_(std::move(other.shape_)), strides_(std::move(other.strides_)), size_(other.size_) {
     other.size_ = 0;
 }
 
-float& Tensor::operator()(size_t i, size_t j) {
-    if (i >= shape_[0] || j >= shape_[1]) {
-        throw std::runtime_error("Index out of bounds <operator()>");
+void Tensor::initStrides() {
+    if (shape_.empty()) {
+        return;
     }
-    return data_[i * shape_[1] + j];
+
+    size_t size = shape_.size();
+    strides_.resize(size);
+    strides_[size - 1] = 1;
+    size--;
+    for (size_t i = size -1; i-- > 0;) {
+        strides_[i] = shape_[i + 1] * strides_[i + 1];
+    }
 }
 
-const float& Tensor::operator()(size_t i, size_t j) const {
-    if (i >= shape_[0] || j >= shape_[1]) {
-        throw std::runtime_error("Index out of bounds <operator()>");
+float& Tensor::operator()(const std::vector<size_t>& indices) {
+    if (indices.size() != shape_.size()) {
+        throw std::runtime_error("The number of indexes must match the dimension <operator()>");
     }
-    return data_[i * shape_[1] + j];
+    size_t index = 0;
+    for (size_t i = 0; i < indices.size(); ++i) {
+        if (indices[i] >= shape_[i]) {
+            throw std::runtime_error("Index out of bounds <operator()>");
+        }
+        index += indices[i] * strides_[i];
+    }
+
+    return data_[index];
+}
+
+const float& Tensor::operator()(const std::vector<size_t>& indices) const {
+    if (indices.size() != shape_.size()) {
+        throw std::runtime_error("The number of indexes must match the dimension <operator()>");
+    }
+    size_t index = 0;
+    for (size_t i = 0; i < indices.size(); ++i) {
+        if (indices[i] >= shape_[i]) {
+            throw std::runtime_error("Index out of bounds <operator()>");
+        }
+        index += indices[i] * strides_[i];
+    }
+
+    return data_[index];
 }
 
 Tensor& Tensor::operator=(const Tensor& other) {
     if (this != &other) {
         data_ = other.data_;
         shape_ = other.shape_;
+        strides_ = other.strides_;
         size_ = other.size_;
     }
 
@@ -65,6 +99,7 @@ Tensor& Tensor::operator=(Tensor&& other) noexcept {
     if (this != &other) {
         data_ = std::move(other.data_);
         shape_ = std::move(other.shape_);
+        strides_ = std::move(other.strides_);
         size_ = other.size_;
         other.size_ = 0;
     }
@@ -92,18 +127,48 @@ Tensor Tensor::operator+(const float otherScalar) const {
 }
 
 void Tensor::print() const {
-    if (shape_.empty()) {
-        std::cout << "[ " << data_[0] << " ]\n";
+    std::vector<size_t> indices(shape_.size(), 0);
+    printRecursive(0, indices, std::cout, 0);
+    std::cout << "\n"; 
+}
+
+void Tensor::printRecursive(size_t dim, std::vector<size_t>& indices, std::ostream& os, size_t indent) const {
+    if (dim == shape_.size()) {
+        os << (*this)(indices);
+        return;
     }
-    else {
-        for (size_t row = 0; row < shape_[0]; ++row) {
-            std::cout << "[ ";
-            for (size_t col = 0; col < shape_[1]; ++col) {
-                std::cout << (*this)(row, col) << " ";
+
+    os << "[";
+    bool is_last_dim = (dim == shape_.size() - 1);
+    if (!is_last_dim) {
+        os << "\n";
+        printIndent(os, indent + 2);
+    }
+
+    for(size_t i = 0; i < shape_[dim]; ++i) {
+        indices[dim] = i;
+        printRecursive(dim + 1, indices, os, indent + 2);
+
+        if (i != shape_[dim] - 1) {
+            os << ", ";
+            if (!is_last_dim) {
+                os << "\n";
+                printIndent(os, indent + 2);
             }
-            std::cout << " ]\n";
         }
-    }   
+    }
+
+    if (!is_last_dim) {
+        os << "\n";
+        printIndent(os, indent);
+    }
+    os << "]";
+}
+
+void Tensor::printIndent(std::ostream& os, size_t indent) const {
+    for (size_t i = 0; i < indent; ++i) {
+        os << " ";
+    }
 }
 
 size_t Tensor::size() const {

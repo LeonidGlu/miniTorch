@@ -11,8 +11,8 @@ public:
     Tensor(Tensor&& other) noexcept;
     ~Tensor() = default;
 
-    float& operator()(size_t i, size_t j);
-    const float& operator()(size_t i, size_t j) const;
+    float& operator()(const std::vector<size_t>& indices);
+    const float& operator()(const std::vector<size_t>& indices) const;
     Tensor& operator=(const Tensor& other);
     Tensor& operator=(Tensor&& other) noexcept;
     Tensor operator+(const Tensor& other) const;
@@ -23,8 +23,13 @@ public:
     const std::vector<size_t>& shape() const;
 
 private:
+    void initStrides();
+    void printRecursive(size_t dim, std::vector<size_t>& indices, std::ostream& os, size_t indent) const;
+    void printIndent(std::ostream& os, size_t indent) const; 
+    
     std::vector<float> data_;
     std::vector<size_t> shape_;
+    std::vector<size_t> strides_;
     size_t size_;
 
 };
