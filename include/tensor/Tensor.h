@@ -16,7 +16,9 @@ public:
     Tensor& operator=(const Tensor& other);
     Tensor& operator=(Tensor&& other) noexcept;
     Tensor operator+(const Tensor& other) const;
-    Tensor operator+(const float otherScalar) const;
+    Tensor operator+(const float scalar) const;
+    Tensor operator-(const Tensor& other) const;
+    Tensor operator-(const float scalar) const;
 
     void print() const;
     size_t size() const;

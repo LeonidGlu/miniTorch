@@ -118,10 +118,29 @@ Tensor Tensor::operator+(const Tensor& other) const {
     return Tensor(shape_, res);
 }
 
-Tensor Tensor::operator+(const float otherScalar) const {
+Tensor Tensor::operator+(const float scalar) const {
     std::vector<float> res(size_);
     for (size_t i = 0; i < size_; ++i) {
-        res[i] = data_[i] + otherScalar;
+        res[i] = data_[i] + scalar;
+    }
+    return Tensor(shape_, res);
+}
+
+Tensor Tensor::operator-(const Tensor& other) const {
+    if (other.shape_ != shape_) {
+        throw std::runtime_error("The dimensions must be match <operator->");
+    }
+    std::vector<float> res(size_);
+    for (size_t i = 0; i < size_; ++i) {
+        res[i] = data_[i] - other.data_[i];
+    }
+    return Tensor(shape_, res);
+}
+
+Tensor Tensor::operator-(const float scalar) const {
+    std::vector<float> res(size_);
+    for (size_t i = 0; i < size_; ++i) {
+        res[i] = data_[i] - scalar;
     }
     return Tensor(shape_, res);
 }
