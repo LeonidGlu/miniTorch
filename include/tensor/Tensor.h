@@ -13,16 +13,24 @@ public:
 
     float &operator()(const std::vector<size_t> &indices);
     const float &operator()(const std::vector<size_t> &indices) const;
-    Tensor &operator=(const Tensor &other);
-    Tensor &operator=(Tensor &&other) noexcept;
+    Tensor& operator=(const Tensor &other);
+    Tensor& operator=(Tensor &&other) noexcept;
     Tensor operator+(const Tensor &other) const;
     Tensor operator+(const float scalar) const;
+    Tensor& operator+=(const Tensor& other);
+    Tensor& operator+=(const float scalar);
     Tensor operator-(const Tensor &other) const;
     Tensor operator-(const float scalar) const;
+    Tensor& operator-=(const Tensor& other);
+    Tensor& operator-=(const float scalar);
     Tensor operator*(const Tensor& other) const;
     Tensor operator*(const float scalar) const;
+    Tensor& operator*=(const Tensor& other);
+    Tensor& operator*=(const float scalar);
     Tensor operator/(const Tensor& other) const;
     Tensor operator/(const float scalar) const;
+    Tensor& operator/=(const Tensor& other);
+    Tensor& operator/=(const float scalar);
 
     Tensor matmul(const Tensor& other) const;
 
