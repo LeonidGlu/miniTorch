@@ -41,15 +41,13 @@ Tensor::Tensor(Tensor&& other) noexcept : data_(std::move(other.data_)),  shape_
 }
 
 void Tensor::initStrides() {
-    if (shape_.empty()) {
+    if(shape_.empty()) {
         return;
     }
 
-    size_t size = shape_.size();
-    strides_.resize(size);
-    strides_[size - 1] = 1;
-    size--;
-    for (size_t i = size -1; i-- > 0;) {
+    strides_.resize(shape_.size());
+    strides_.back() = 1;
+    for(int i = (int)shape_.size() - 2; i >= 0; --i) {
         strides_[i] = shape_[i + 1] * strides_[i + 1];
     }
 }
@@ -59,7 +57,7 @@ float& Tensor::operator()(const std::vector<size_t>& indices) {
         throw std::runtime_error("The number of indexes must match the dimension <operator()>");
     }
     size_t index = 0;
-    for (size_t i = 0; i < indices.size(); ++i) {
+    for (size_t i = 0; i < indices.size(); i++) {
         if (indices[i] >= shape_[i]) {
             throw std::runtime_error("Index out of bounds <operator()>");
         }
@@ -74,7 +72,7 @@ const float& Tensor::operator()(const std::vector<size_t>& indices) const {
         throw std::runtime_error("The number of indexes must match the dimension <operator()>");
     }
     size_t index = 0;
-    for (size_t i = 0; i < indices.size(); ++i) {
+    for (size_t i = 0; i < indices.size(); i++) {
         if (indices[i] >= shape_[i]) {
             throw std::runtime_error("Index out of bounds <operator()>");
         }

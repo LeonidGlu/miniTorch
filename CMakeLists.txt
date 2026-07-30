@@ -8,3 +8,19 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(src/tensor)
 
+enable_testing()
+find_package(GTest CONFIG REQUIRED)
+
+add_executable(test_tensor
+    tests/test_tensor.cpp
+)
+
+target_link_libraries(test_tensor
+    PRIVATE
+        tensor
+        GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(test_tensor)
+
