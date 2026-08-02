@@ -36,7 +36,8 @@ public:
 
     void print() const;
     size_t size() const;
-    const std::vector<size_t> &shape() const;
+    const std::vector<size_t>& shape() const;
+    const std::vector<float>& data() const;
 
 private:
     void initStrides();

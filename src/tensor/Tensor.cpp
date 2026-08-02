@@ -337,3 +337,7 @@ size_t Tensor::size() const {
 const std::vector<size_t>& Tensor::shape() const {
     return shape_;
 }
+
+const std::vector<float>& Tensor::data() const {
+    return data_;
+}
