@@ -10,10 +10,49 @@ struct BinaryOpTestParams{
     Tensor (*op)(const Tensor&, const Tensor&);
 };
 
-Tensor add_op(const Tensor& x, const Tensor& y) { return x + y; }
-Tensor sub_op(const Tensor& x, const Tensor& y) { return x - y; }
-Tensor mul_op(const Tensor& x, const Tensor& y) { return x * y; }
-Tensor div_op(const Tensor& x, const Tensor& y) { return x / y; }
+Tensor add_op(const Tensor& x, const Tensor& y) {
+    std::vector<float> dataX = x.data();
+    std::vector<float> dataY = y.data();
+    std::vector<float> result(x.size());
+    
+    for (size_t i = 0; i < x.size(); ++i) {
+        result[i] = dataX[i] + dataY[i];
+    }
+    return Tensor(x.shape(), result); 
+}
+
+Tensor sub_op(const Tensor& x, const Tensor& y) {
+    std::vector<float> dataX = x.data();
+    std::vector<float> dataY = y.data();
+    std::vector<float> result(x.size());
+    
+    for (size_t i = 0; i < x.size(); ++i) {
+        result[i] = dataX[i] - dataY[i];
+    }
+    return Tensor(x.shape(), result); 
+}
+
+Tensor mul_op(const Tensor& x, const Tensor& y) {
+    std::vector<float> dataX = x.data();
+    std::vector<float> dataY = y.data();
+    std::vector<float> result(x.size());
+    
+    for (size_t i = 0; i < x.size(); ++i) {
+        result[i] = dataX[i] * dataY[i];
+    }
+    return Tensor(x.shape(), result); 
+}
+
+Tensor div_op(const Tensor& x, const Tensor& y) {
+    std::vector<float> dataX = x.data();
+    std::vector<float> dataY = y.data();
+    std::vector<float> result(x.size());
+    
+    for (size_t i = 0; i < x.size(); ++i) {
+        result[i] = dataX[i] / dataY[i];
+    }
+    return Tensor(x.shape(), result); 
+}
 
 Tensor random_tensor(const std::vector<size_t>& shape) {
     std::random_device rd;
