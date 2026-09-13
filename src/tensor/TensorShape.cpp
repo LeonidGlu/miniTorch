@@ -22,7 +22,7 @@ void Tensor::transpose() {
     std::swap(shape_[shape_.size()-1], shape_[shape_.size() - 2]);
 }
 
-void Tensor::transpose(std::initializer_list<size_t> axes) {
+void Tensor::transpose(std::vector<size_t> axes) {
     if (shape_.size() < 2) {
         throw std::runtime_error("It is possible to transpose tensors that have at least 2 dimensions!");
     }

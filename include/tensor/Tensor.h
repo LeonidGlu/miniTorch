@@ -35,7 +35,7 @@ public:
     Tensor matmul(const Tensor& other) const;
 
     void transpose();
-    void transpose(std::initializer_list<size_t> axes);
+    void transpose(std::vector<size_t> axes);
 
     void print() const;
     size_t size() const;
