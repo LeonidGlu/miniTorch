@@ -12,7 +12,11 @@ enable_testing()
 find_package(GTest CONFIG REQUIRED)
 
 add_executable(test_tensor
-    tests/test_tensor.cpp
+    tests/tensor_tests/TensorArithmeticsTest.cpp
+    tests/tensor_tests/TensorIndexingTest.cpp
+    tests/tensor_tests/TensorLinearTest.cpp
+    tests/tensor_tests/TensorShapeTest.cpp
+    tests/tensor_tests/TensorTest.cpp
 )
 
 target_link_libraries(test_tensor
