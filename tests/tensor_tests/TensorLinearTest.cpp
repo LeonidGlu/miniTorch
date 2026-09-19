@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "tensor/Tensor.h"
 
-TEST(TensorTest, Matmul){
+TEST(TensorLinearTest, Matmul){
     Tensor a({2,3}, {1.0f, 4.0f, 12.0f, 10.0f, 2.0f, 6.0f});
     Tensor b({3,3}, {1.0f, 2.0f, 3.0f, 5.0f, 3.0f, 44.0f, 12.0f, 100.0f, 9.0f});
     Tensor t = a.matmul(b);
